@@ -70,13 +70,18 @@ function filterQuotes() {
     displayRandomQuote();
 }
 
+function quoteDisplay(quote) {
+    quoteText.textContent = `"${quote.text}"`;
+    quoteAuthor.textContent = `- ${quote.author}`;
+}
+
 function displayRandomQuote() {
     const selectedCategory = categoryFilter.value;
     let availableQuotes = [];
     if (selectedCategory === 'all') {
         availableQuotes = Object.values(quotes).flatMap(category => category);
     } else {
-        availableQuotes = quotes[selectedCategory];
+        availableQuotes = quotes[selectedCategory] || [];
     }
     if (availableQuotes.length > 0) {
         const randomIndex = Math.floor(Math.random() * availableQuotes.length);
@@ -85,8 +90,7 @@ function displayRandomQuote() {
         quoteText.style.opacity = 0;
         quoteAuthor.style.opacity = 0;
         setTimeout(() => {
-            quoteText.textContent = `"${currentQuote.text}"`;
-            quoteAuthor.textContent = `- ${currentQuote.author}`;
+            quoteDisplay(currentQuote);
             quoteText.style.opacity = 1;
             quoteAuthor.style.opacity = 1;
         }, 300);
