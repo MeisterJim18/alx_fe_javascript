@@ -123,7 +123,7 @@ async function syncQuotes() {
     saveQuotesToStorage();
     populateCategories();
     displayRandomQuote();
-    alert("🔄 Data synced with server!");
+    alert("Quotes synced with server!");
 }
 
 setInterval(syncQuotes, 30000);
