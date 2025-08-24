@@ -147,16 +147,30 @@ function addNewQuote() {
     alert('Quote added successfully!');
 }
 
+
 function exportToJsonFile() {
     const dataStr = JSON.stringify(quotes, null, 2);
-    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+    
+    
+    const blob = new Blob([dataStr], { type: 'application/json' });
+    
+   
+    const url = URL.createObjectURL(blob);
     
     const exportFileDefaultName = 'quotes.json';
     
+    
     const linkElement = document.createElement('a');
-    linkElement.setAttribute('href', dataUri);
-    linkElement.setAttribute('download', exportFileDefaultName);
+    linkElement.href = url;
+    linkElement.download = exportFileDefaultName;
+    
+    
+    document.body.appendChild(linkElement);
     linkElement.click();
+    
+    
+    document.body.removeChild(linkElement);
+    URL.revokeObjectURL(url);
 }
 
 function importFromJsonFile(event) {
@@ -185,7 +199,7 @@ function importFromJsonFile(event) {
         }
     };
     reader.readAsText(file);
-
+    
     event.target.value = '';
 }
 
