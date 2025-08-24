@@ -1,4 +1,4 @@
-const quotes = {
+let quotes = JSON.parse(localStorage.getItem('quotesData')) || {
     wisdom: [
         { text: "The child who is not embraced by the village will burn it down to feel its warmth.", author: "African Proverb" },
         { text: "Knowledge is like a garden: if it is not cultivated, it cannot be harvested.", author: "African Proverb" },
@@ -21,6 +21,7 @@ const quotes = {
     ]
 };
 
+
 const categorySelect = document.getElementById('category-select');
 const newQuoteBtn = document.getElementById('new-quote-btn');
 const addFavoriteBtn = document.getElementById('add-favorite-btn');
@@ -34,6 +35,11 @@ const favoritesList = document.getElementById('favorites-list');
 
 let favoriteQuotes = JSON.parse(localStorage.getItem('favoriteQuotes')) || [];
 let currentQuote = null;
+
+
+function saveQuotesToStorage() {
+    localStorage.setItem('quotesData', JSON.stringify(quotes));
+}
 
 function displayRandomQuote() {
     const selectedCategory = categorySelect.value;
@@ -51,6 +57,9 @@ function displayRandomQuote() {
         const randomIndex = Math.floor(Math.random() * availableQuotes.length);
         currentQuote = availableQuotes[randomIndex];
         
+       
+        sessionStorage.setItem('lastViewedQuote', JSON.stringify(currentQuote));
+        
         quoteText.style.opacity = 0;
         quoteAuthor.style.opacity = 0;
         
@@ -67,14 +76,8 @@ function displayRandomQuote() {
     }
 }
 
-
 function showRandomQuote() {
     displayRandomQuote();
-}
-
-
-function createAddQuoteForm() {
-    console.log("Add quote form is ready");
 }
 
 function addToFavorites() {
@@ -136,6 +139,7 @@ function addNewQuote() {
     }
     
     quotes[category].push({ text, author });
+    saveQuotesToStorage(); 
     
     newQuoteInput.value = '';
     newAuthorInput.value = '';
@@ -143,12 +147,61 @@ function addNewQuote() {
     alert('Quote added successfully!');
 }
 
+function exportToJsonFile() {
+    const dataStr = JSON.stringify(quotes, null, 2);
+    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+    
+    const exportFileDefaultName = 'quotes.json';
+    
+    const linkElement = document.createElement('a');
+    linkElement.setAttribute('href', dataUri);
+    linkElement.setAttribute('download', exportFileDefaultName);
+    linkElement.click();
+}
+
+function importFromJsonFile(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const importedQuotes = JSON.parse(e.target.result);
+            
+            
+            for (const category in importedQuotes) {
+                if (!quotes[category]) {
+                    quotes[category] = [];
+                }
+                quotes[category] = [...quotes[category], ...importedQuotes[category]];
+            }
+            
+            saveQuotesToStorage();
+            alert('Quotes imported successfully!');
+            displayRandomQuote();
+            
+        } catch (error) {
+            alert('Error importing file: ' + error.message);
+        }
+    };
+    reader.readAsText(file);
+
+    event.target.value = '';
+}
+
+
 newQuoteBtn.addEventListener('click', displayRandomQuote);
 addFavoriteBtn.addEventListener('click', addToFavorites);
 submitQuoteBtn.addEventListener('click', addNewQuote);
 categorySelect.addEventListener('change', displayRandomQuote);
+document.getElementById('export-btn').addEventListener('click', exportToJsonFile);
+document.getElementById('import-file').addEventListener('change', importFromJsonFile);
 
 
 displayRandomQuote();
 updateFavoritesDisplay();
-createAddQuoteForm(); 
+
+const lastQuote = JSON.parse(sessionStorage.getItem('lastViewedQuote'));
+if (lastQuote) {
+    console.log("Last viewed quote:", lastQuote);
+}
