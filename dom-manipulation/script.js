@@ -72,6 +72,11 @@ function showRandomQuote() {
     displayRandomQuote();
 }
 
+
+function createAddQuoteForm() {
+    console.log("Add quote form is ready");
+}
+
 function addToFavorites() {
     if (currentQuote && !favoriteQuotes.some(quote => quote.text === currentQuote.text)) {
         favoriteQuotes.push(currentQuote);
@@ -138,7 +143,6 @@ function addNewQuote() {
     alert('Quote added successfully!');
 }
 
-
 newQuoteBtn.addEventListener('click', displayRandomQuote);
 addFavoriteBtn.addEventListener('click', addToFavorites);
 submitQuoteBtn.addEventListener('click', addNewQuote);
@@ -147,3 +151,4 @@ categorySelect.addEventListener('change', displayRandomQuote);
 
 displayRandomQuote();
 updateFavoritesDisplay();
+createAddQuoteForm(); 
